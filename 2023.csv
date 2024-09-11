@@ -1,4 +1,4 @@
-"Name","Team","POS","PTS","PTS/G","GP","CMP","YDS","TD","INT","ATT","YDS","TD","FUM","TGT","REC","YDS","TD"
+"Name","Team","lineupSlot","points","avg_points","GP","passingCompletions","passingYards","passingTouchdowns","passingInterceptions","rushingAttempts","rushingYards","rushingTouchdowns","fumbles","receivingTargets","receivingReceptions","receivingYards","receivingTouchdowns"
 "CeeDee Lamb","DAL","WR","403.2","23.7","17","0","0","0","0","14","113","2","2","181","135","1749","12"
 "Josh Allen","BUF","QB","392.6","23.1","17","385","4306","29","18","111","524","15","4","0","0","0","0"
 "Christian McCaffrey","SF","RB","391.3","24.5","16","0","0","0","0","272","1459","14","2","83","67","564","7"
