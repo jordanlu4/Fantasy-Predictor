@@ -16,16 +16,16 @@ matchups = league.scoreboard(week=2)
 
 
 # Loop through each matchup and search for Travis Kelce
-# for matchup in matchups:
-#     for player in matchup.home_team.roster:
-#         if player.name == "Travis Kelce":
-#             print(f"Found Travis Kelce in home team")
-#             print(player.__dict__)  # Print all attributes of the player object to inspect them
+for matchup in matchups:
+    for player in matchup.home_team.roster:
+        if player.name == "A.J. Brown":
+            print(f"Found Travis Kelce in home team")
+            print(player.__dict__)  # Print all attributes of the player object to inspect them
 
-#     for player in matchup.away_team.roster:
-#         if player.name == "Travis Kelce":
-#             print(f"Found Travis Kelce in away team")
-#             print(player.__dict__)
+    for player in matchup.away_team.roster:
+        if player.name == "A.J. Brown":
+            print(f"Found Travis Kelce in away team")
+            print(player.__dict__)
 
 # for matchup in matchups:
 #     for player in matchup.home_team.roster:
@@ -50,18 +50,18 @@ matchups = league.scoreboard(week=2)
 #             print(f"Projected Points for Week 1: {projected_points}")
 #             print(f"Actual Points Scored in Week 1: {actual_points}")
 
-import glob
-import pandas as pd
+# import glob
+# import pandas as pd
 
-# Load all 2023 weekly CSV files
-file_paths = glob.glob('2023/2023_*.csv')  # Path to the folder containing 2023 CSV files
+# # Load all 2023 weekly CSV files
+# file_paths = glob.glob('2023/2023_*.csv')  # Path to the folder containing 2023 CSV files
 
-# Iterate over each file and print the first few rows
-for fp in file_paths:
-    data = pd.read_csv(fp)
-    print(f"File: {fp}")
-    print(data.head())  # Display first few rows of each file
-    print(f"Number of rows in {fp}: {data.shape[0]}")
-    print("\n")
+# # Iterate over each file and print the first few rows
+# for fp in file_paths:
+#     data = pd.read_csv(fp)
+#     print(f"File: {fp}")
+#     print(data.head())  # Display first few rows of each file
+#     print(f"Number of rows in {fp}: {data.shape[0]}")
+#     print("\n")
 
     
