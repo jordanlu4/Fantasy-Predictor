@@ -25,15 +25,15 @@ def load_weekly_data():
     # Load historical data (e.g., 2023 data)
     try:
         fantasy_data_2023 = pd.read_csv('2023/2023_ind.csv', on_bad_lines='skip', sep=',', quotechar='"')
-        print(f"2023 data loaded: {len(fantasy_data_2023)} records")
+        # print(f"2023 data loaded: {len(fantasy_data_2023)} records")
 
         # We won't filter historical data based on injury or active status
         data_frames.append(fantasy_data_2023)
     except FileNotFoundError:
-        print("2023 data file not found. Please check the file path.")
+        # print("2023 data file not found. Please check the file path.")
         exit()
     except pd.errors.EmptyDataError:
-        print("2023 data file is empty. Please check the file content.")
+        # print("2023 data file is empty. Please check the file content.")
         exit()
 
     # Load all weekly data files dynamically
@@ -43,7 +43,7 @@ def load_weekly_data():
         try:
             week_data = pd.read_csv(file_name)
             if not week_data.empty:
-                print(f"{file_name} loaded: {len(week_data)} records")
+                # print(f"{file_name} loaded: {len(week_data)} records")
 
                 # For players present in 2024 CSV files, we will filter based on injury or backup status
                 week_data = filter_players(week_data)
@@ -70,7 +70,7 @@ def filter_players(df):
     required_columns = ['Name', 'injuryStatus', 'lineupSlot', 'percent_owned', 'percent_started', 'avg_points', 'injured']
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
-        print(f"Warning: The following required columns are missing in the data: {missing_columns}")
+        # print(f"Warning: The following required columns are missing in the data: {missing_columns}")
         # Proceed without filtering based on these columns
         return df
 
@@ -90,8 +90,8 @@ def filter_players(df):
         (df['avg_points'] > 0.0)
     ]
 
-    print(f"Records before filtering: {len(df)}")
-    print(f"Records after filtering: {len(filtered_df)}")
+    # print(f"Records before filtering: {len(df)}")
+    # print(f"Records after filtering: {len(filtered_df)}")
 
     return filtered_df
 
@@ -222,62 +222,48 @@ def make_projections(combined_data, rf_model, scaler, features):
     max_week = combined_data['Week'].max()
     current_week = league.current_week
     next_week = current_week
-    print(f"Making projections for Week {next_week}...")
+    print(f"Making projection for Week {next_week}...")
 
-    # Prepare data for all players for the next week
-    player_projections = []
-    grouped = combined_data.groupby('Name')
+    # Prompt the user for a player's name
+    player_name = "Marvin Harrison Jr."
 
-    for name, group in grouped:
-        group = group.sort_values('Week').reset_index(drop=True)
-        if len(group) >= 1:
+    # Check if the player exists in the combined data
+    if player_name in combined_data['Name'].values:
+        player_data = combined_data[combined_data['Name'] == player_name]
+        player_data = player_data.sort_values('Week').reset_index(drop=True)
+        if len(player_data) >= 1:
             # Use stats up to the latest week as features
-            previous_weeks_stats = group[features].mean().to_frame().T
+            previous_weeks_stats = player_data[features].mean().to_frame().T
             # Fill missing values with zeros
             previous_weeks_stats.fillna(0, inplace=True)
             # Standardize the features
             player_features_scaled = scaler.transform(previous_weeks_stats)
             # Predict next week's points
             projected_points_model = rf_model.predict(player_features_scaled)[0]
-            player_projections.append({
-                'Name': name,
-                'Projected_Points_Model': projected_points_model
-            })
 
-    # Create a DataFrame of projections
-    projections_df = pd.DataFrame(player_projections)
+            # Fetch projected points and injury status for the upcoming week
+            projected_data = fetch_projected_points_and_injury_status(league, next_week)
+            if player_name in projected_data['Name'].values:
+                player_info = projected_data[projected_data['Name'] == player_name].iloc[0]
+                projected_points = player_info['projected_points']
+                injury_status = player_info['injuryStatus']
+                lineup_slot = player_info['lineupSlot']
+            else:
+                projected_points = None
+                injury_status = 'Unknown'
+                lineup_slot = 'Unknown'
 
-    # Fetch projected points and injury status for the upcoming week
-    projected_data = fetch_projected_points_and_injury_status(league, next_week)
-
-    # Merge projections with projected data
-    final_projections = projections_df.merge(projected_data, on='Name', how='left')
-
-    # Exclude players with projected points of 0 or who are injured
-    final_projections = final_projections[
-        (final_projections['projected_points'] > 0) &
-        (final_projections['injuryStatus'] == 'ACTIVE')
-    ]
-
-    # Sort by our model's projected points
-    final_projections = final_projections.sort_values('Projected_Points_Model', ascending=False).reset_index(drop=True)
-
-    # Save projections to CSV
-    final_projections.to_csv(f'Week_{next_week}_Projections.csv', index=False)
-    print(f"Projections for Week {next_week} saved to 'Week_{next_week}_Projections.csv'.")
-
-    # Print top 10 projections
-    print("\nTop 10 Player Projections:")
-    print(final_projections.head(25))
-
-    # Example: Get projection for a specific player
-    player_name = "Josh Allen"
-
-    if player_name in final_projections['Name'].values:
-        player_projection = final_projections[final_projections['Name'] == player_name]['Projected_Points_Model'].values[0]
-        print(f"{player_name}'s projected points for Week {next_week}: {player_projection}")
+            # Display the projection
+            print(f"\nProjection for {player_name}:")
+            print(f"Projected Points (Model): {projected_points_model:.2f}")
+            print(f"Projected Points (ESPN): {projected_points}")
+            print(f"Injury Status: {injury_status}")
+            print(f"Lineup Slot: {lineup_slot}")
+        
+        else:
+            print(f"No data available for {player_name}.")
     else:
-        print(f"No projection available for {player_name}.")
+        print(f"Player {player_name} not found in the data.")
 
 if __name__ == "__main__":
     combined_data = load_weekly_data()

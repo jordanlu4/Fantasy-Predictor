@@ -11,7 +11,7 @@ espn_s2 = "AECLN2hznzdXCpYvoAUk2gye37ETe82PqweTOBQsseH%2Bz3DNYExFgvAZwz9mGRNvrrn
 
 # Initialize the league
 league = League(league_id=league_id, year=year, espn_s2=espn_s2, swid=swid)
-week = 3  # Update this to the desired week number
+week = 4  # Update this to the desired week number
 
 # Function to fetch and process data for a given week
 def fetch_week_data(week):
