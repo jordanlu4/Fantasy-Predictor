@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Projection</title>
+</head>
+<body>
+    <h1>{{ player_name }}'s Fantasy Football Projection</h1>
+
+    {% if projected_points_model is not none %}
+        <p><strong>Model Projected Points:</strong> {{ projected_points_model }}</p>
+        <p><strong>ESPN Projected Points:</strong> {{ projected_points_espn }}</p>
+        <p><strong>Injury Status:</strong> {{ injury_status }}</p>
+        <p><strong>Position:</strong> {{ lineup_slot }}</p>
+    {% else %}
+        <p>No data available for {{ player_name }}.</p>
+    {% endif %}
+
+    <a href="/">Back to Player Selection</a>
+</body>
+</html>
