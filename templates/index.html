@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Projection Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Player Projections</title>
 </head>
 <body>
-    <h1>Fantasy Football Player Projections</h1>
-    <form action="/projection" method="post">
-        <label for="player">Select a player:</label>
-        <select name="player" id="player">
-            {% for player in players %}
-                <option value="{{ player }}">{{ player }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Get Projection</button>
-    </form>
+    <div class="container">
+        <h1>Select a Player</h1>
+        <form action="/projection" method="POST">
+            <select name="player">
+                {% for player in players %}
+                    <option value="{{ player }}">{{ player }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <button type="submit">Get Projection</button>
+        </form>
+    </div>
 </body>
 </html>
